@@ -9,8 +9,8 @@ interface Feedback {
 }
 
 interface ApiResponse {
-  status: number;
-  body: Feedback[];
+  statusCode: number;
+  data: Feedback[];
 }
 
 export default function FeedbacksPage() {
