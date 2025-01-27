@@ -9,7 +9,7 @@ export async function GET() {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: { revalidate: 0 } // Disable cache to always get fresh data
+      cache: 'no-store', // Disable caching
     });
 
     if (!response.ok) {
