@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface Feedback {
   email: string;
@@ -15,30 +14,24 @@ interface ApiResponse {
 }
 
 export default function FeedbacksPage() {
-  const router = useRouter();
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchFeedbacks();
-
-    // Refresh data every 5 seconds
-    const interval = setInterval(() => {
-      fetchFeedbacks();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const fetchFeedbacks = async () => {
     try {
-      const response = await fetch('/api/feedback', {
-        cache: 'no-store',
-        next: { revalidate: 0 }
+      // Add timestamp to URL to prevent caching
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/feedback?t=${timestamp}`, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
       });
+      
       const data: ApiResponse = await response.json();
-
+      
       if (data.statusCode === 200) {
         setFeedbacks(data.data);
       } else {
@@ -50,6 +43,15 @@ export default function FeedbacksPage() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchFeedbacks();
+    
+    // Poll for new data every 3 seconds
+    // const interval = setInterval(fetchFeedbacks, 3000);
+    
+    // return () => clearInterval(interval);
+  }, []);
 
   const formatRating = (rating: number) => '⭐'.repeat(rating);
 
