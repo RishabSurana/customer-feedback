@@ -24,7 +24,7 @@ export default function FeedbacksPage() {
 
   const fetchFeedbacks = async () => {
     try {
-      const response = await fetch('/api/feedback');
+      const response = await fetch('/api/feedback?t=' + new Date().getTime());
       const data: ApiResponse = await response.json();
 
       debugger
