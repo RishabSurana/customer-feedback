@@ -9,9 +9,57 @@ export default function FeedbackPage() {
     rating: 5
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [status, setStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({
+    type: null,
+    message: ''
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
+    setStatus({ type: null, message: '' });
+
+    try {
+      const response = await fetch('/api/feedback/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          feedback: formData.message,
+          rating: formData.rating
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit feedback');
+      }
+
+      setStatus({
+        type: 'success',
+        message: 'Thank you for your feedback!'
+      });
+
+      // Reset form
+      setFormData({
+        email: '',
+        message: '',
+        rating: 5
+      });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: 'Failed to submit feedback. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const containerStyle = {
@@ -77,9 +125,9 @@ export default function FeedbackPage() {
     borderRadius: '8px',
     fontSize: '16px',
     fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-    marginTop: '8px'
+    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+    opacity: isSubmitting ? 0.7 : 1,
+    transition: 'background-color 0.2s, opacity 0.2s'
   };
 
   const ratingContainerStyle = {
@@ -99,6 +147,15 @@ export default function FeedbackPage() {
     outline: 'none'
   };
 
+  const statusMessageStyle = {
+    padding: '12px',
+    marginBottom: '20px',
+    borderRadius: '8px',
+    textAlign: 'center' as const,
+    backgroundColor: status.type === 'success' ? '#ecfdf5' : '#fef2f2',
+    color: status.type === 'success' ? '#065f46' : '#991b1b'
+  };
+
   const handleRatingClick = (rating: number) => {
     setFormData(prev => ({ ...prev, rating }));
   };
@@ -108,6 +165,12 @@ export default function FeedbackPage() {
       <div style={formContainerStyle}>
         <h1 style={titleStyle}>Customer Feedback</h1>
         
+        {status.type && (
+          <div style={statusMessageStyle}>
+            {status.message}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div style={inputContainerStyle}>
             <label style={labelStyle}>
@@ -120,6 +183,7 @@ export default function FeedbackPage() {
               style={inputStyle}
               required
               placeholder="your@email.com"
+              disabled={isSubmitting}
             />
           </div>
 
@@ -135,9 +199,10 @@ export default function FeedbackPage() {
                   onClick={() => handleRatingClick(star)}
                   style={{
                     ...starButtonStyle,
-                    color: star <= formData.rating ? '#fbbf24' : '#e5e7eb'
+                    color: star <= formData.rating ? '#fbbf24' : '#e5e7eb',
                   }}
                   aria-label={`Rate ${star} stars`}
+                  disabled={isSubmitting}
                 >
                   ★
                 </button>
@@ -155,22 +220,16 @@ export default function FeedbackPage() {
               style={textareaStyle}
               required
               placeholder="Please share your thoughts..."
+              disabled={isSubmitting}
             />
           </div>
 
           <button
             type="submit"
             style={buttonStyle}
-            onMouseOver={(e) => {
-              const target = e.target as HTMLButtonElement;
-              target.style.backgroundColor = '#1d4ed8';
-            }}
-            onMouseOut={(e) => {
-              const target = e.target as HTMLButtonElement;
-              target.style.backgroundColor = '#2563eb';
-            }}
+            disabled={isSubmitting}
           >
-            Submit Feedback
+            {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
           </button>
         </form>
       </div>
