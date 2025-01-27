@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 
 const FEEDBACK_API = 'https://dev11-app.csnonprod.com/automations-api/apiorchestration/89f2f276f3ab4983a0216dea6a8bee1b/feedbacks';
 
+
 export async function GET() {
   try {
-    const response = await fetch(FEEDBACK_API, {
+    const url = `${FEEDBACK_API}?t=${new Date().getTime()}`;
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
