@@ -20,7 +20,7 @@ export default function FeedbackList() {
 
   const fetchFeedbacks = async () => {
     try {
-      const response = await fetch('https://dev11-app.csnonprod.com/automations-api/apiorchestration/89f2f276f3ab4983a0216dea6a8bee1b/feedbacks', {
+      const response = await fetch('https://dev11-automations-cf-api.csnonprod.com/apiorchestration/a7ca0ce01da2473eae9960deffc40996/feedbacks', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
