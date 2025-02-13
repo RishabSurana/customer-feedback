@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const FEEDBACK_API = 'https://dev11-automations-cf-api.csnonprod.com/apiorchestration/a7ca0ce01da2473eae9960deffc40996/feedbacks';
+const FEEDBACK_API = 'https://dev11-automations-cf-api.csnonprod.com/apiorchestration/adc941d504d341feafca51d7e2ebd931/feedbacks';
 
 
 export async function GET() {
