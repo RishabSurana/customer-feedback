@@ -33,13 +33,13 @@ export default function FeedbackList() {
         throw new Error('Failed to fetch feedbacks');
       }
       
-      const data: ApiResponse = await response.json();
-      
-      if (data.statusCode === 200) {
-        setFeedbacks(data.data);
-      } else {
-        throw new Error('Failed to fetch feedbacks');
-      }
+      const data = await response.json();
+      setFeedbacks(data);
+      // if (data.statusCode === 200) {
+      //   setFeedbacks(data.data);
+      // } else {
+      //   throw new Error('Failed to fetch feedbacks');
+      // }
     } catch (err) {
       setError('Failed to load feedbacks. Please try again later.');
     } finally {
